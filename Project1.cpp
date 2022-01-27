@@ -1,7 +1,7 @@
 /*
   Name: Brady Keeley
-  Class: CPSC 122 Section 
-  Date: 1/21/2022
+  Class: CPSC 122 Section 2 
+  Date: 1/26/2022
   Assignment: Project 1
   Description: Prints a specified number if prime numbers in a specific number of coloums determined by the user
 */
