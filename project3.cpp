@@ -3,7 +3,9 @@
   Class: CPSC 122 Section 2 
   Date: 1/28/2022
   Assignment: Project 3
-  Description: 
+  Description: converts, 2,digit strings inputed as c-strings into integer digits using atoiMy()
+  Takes the 2 integers and multiplies them together and outputs the product to a file recieved 
+  from the command line
 */
 
 #include <iostream>
