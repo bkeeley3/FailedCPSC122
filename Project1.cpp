@@ -64,44 +64,18 @@ void display(int totalPrimes, int cols)
 */
 bool isPrime(int num)
 {
-  bool prime = false;
+  bool prime = true;
  
-  if (num % 2 == 0)///if else structure to sort and assign prime or not prime 
+  for (int i = 2; i <= num/2; ++i )
   {
-    if (num == 2) /// hard code checking for single didget primes in each if statement
-      prime = true;
-    else
+    if (num % i == 0)
+    {
       prime = false;
+      break;
+    }
+
   }
-  else if (num % 3 == 0)
-  {
-    if (num == 3)
-      prime = true;
-    else
-      prime = false;
-  }
-  else if (num % 5 == 0)
-  {
-    if (num == 5)
-      prime = true;
-    else
-      prime = false;
-  }
-  else if (num % 7 == 0)
-  {
-    if (num == 7)
-      prime = true;
-    else
-      prime = false;
-  }
-  else if (num % 9 == 0)
-  {
-    prime = false;
-  }      
-  else
-  {
-    prime = true;
-  }
+  
   return prime;
 }
 
