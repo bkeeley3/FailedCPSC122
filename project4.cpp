@@ -3,7 +3,9 @@
     Class: CPSC 122 Section 2
     Date: 2/4/2022
     Assignment: Project 4
-    Description: 
+    Description: encrypts a plaintext file given in the command line, decrypts the encrypted file
+    to a seperate plaintext file given in the command line. All uses a randomly gnerated key stored
+    in a key file designated on the command line. 
 */
 #include <iostream>
 #include <fstream>
@@ -78,7 +80,7 @@ Returns: encrypted version of plaintext file
 void fileEncrypt(fstream& in, fstream& out, int key)
 {
     char ch;
-    while (in.peek() != EOF)
+    while (in.peek() != EOF) ///loops through file while there is no end of line character
     {
         ch = in.get();
         if (isalnum(ch))
