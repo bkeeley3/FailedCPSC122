@@ -1,10 +1,10 @@
 /*
     Name: Brady Keeley
     Class: CPSC 122 Section 2
-    Date: 2/4/2022
-    Assignment: Project 4
+    Date: 2/9/2022
+    Assignment: Project 5
     Description: encrypts a plaintext file given in the command line, decrypts the encrypted file
-    to a seperate plaintext file given in the command line. All uses a randomly gnerated key stored
+    to a seperate plaintext file given in the command line. All uses a randomly gnerated keys stored
     in a key file designated on the command line. 
 */
 #include <iostream>
@@ -14,38 +14,32 @@
 #include <time.h>
 using namespace std;
 
-int keyGen();
-char encrypt(char, int);
-char decrypt (char ch, int key);
+void keyGen(string);
+char encrypt(char, int, int);
+char decrypt (char, int, int);
 void fileOpen(fstream& file, string name, char mode);
-int getKey(string);
-void fileEncrypt(fstream& in, fstream& out, int key);
-void fileDecrypt(fstream& in, fstream& out, int key);
+void fileControl(string, string, string, int);
 
+int ALPHA_VALUES[] = {1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25};
+int MI[] = {1, 0, 9, 0, 21, 0, 15, 0, 3, 0, 19, 0, 0, 0, 7, 0, 23, 0, 11, 0, 5, 0, 17, 0, 25};
 int main(int argc, char* argv[])
 {
     char ch;
     fstream fin;
     fstream fout;
     int mode = atoi(argv[1]);
-    
+
     if (mode == 0)
     {
-        fileOpen(fout, argv[2], 'w');
-        int key = keyGen();
-        fout << key;
+        keyGen(argv[2]);
     }
     else if (mode == 1)
     {
-        fileOpen(fin, argv[3], 'r');
-        fileOpen(fout, argv[4], 'w');
-        fileEncrypt(fin, fout, getKey(argv[2]));
+        fileControl(argv[2], argv[3], argv[4], mode);
     }
     else if (mode == 2)
     {
-        fileOpen(fin, argv[3], 'r');
-        fileOpen(fout, argv[4], 'w');
-        fileDecrypt(fin, fout, getKey(argv[2]));
+        fileControl(argv[2], argv[3], argv[4], mode);
     }
 }
 
@@ -54,72 +48,75 @@ Description: Randomly generates an integer in the range: [1-25]
 Input: none
 Output: returns a randomly generated integer in the range [1-25]
 */
-int keyGen()
+void keyGen(string fileName)
 {
+    fstream fout;
     srand(time(0));     ///seeds so random() does not return same number everytime
-    int key = 1 + random() % 25;
-    return key;
+    int beta = 1 + random() % 25;
+    int alphaIndex = random() % 12;
+    int alpha = ALPHA_VALUES[alphaIndex];
+    fileOpen(fout, fileName, 'w');
+    fout << alpha << endl;
+    fout << beta << endl;
+    fout.close();
 }
-/*
-Description: retrieves the key from the file holding the key
-input: name of the key file
-output: returns the key from the file
-*/
-int getKey(string name)
-{
-    fstream keyGetter;
-    int key;
-    fileOpen(keyGetter, name, 'r');
-    keyGetter >> key;
-    return key;
-}
+
 /*
 Description: Reads the plaintext and writes it encrypted to the encryption file
 Input: plaintext file, file to encrypt to, valid key
 Returns: encrypted version of plaintext file
 */
-void fileEncrypt(fstream& in, fstream& out, int key)
+void fileControl(string keyFile, string inFile, string outFile, int mode)
 {
+    fstream key, fin, fout;
+    fileOpen(key, keyFile, 'r');
+    fileOpen(fin, inFile, 'r');
+    fileOpen(fout, outFile, 'w');
+    int alpha, beta;
+    key >> alpha;
+    key >> beta;
+
     char ch;
-    while (in.peek() != EOF) ///loops through file while there is no end of line character
+    if (mode == 1)
     {
-        ch = in.get();
-        if (isalnum(ch))
+        while (fin.peek() != EOF) ///loops through file while there is no end of line character
         {
-            ch = toupper(ch);
-            ch = encrypt(ch, key);
+            ch = fin.get();
+            if (isalnum(ch))
+            {
+                ch = toupper(ch);
+                ch = encrypt(ch, alpha, beta);
+            }
+            fout.put(ch);
         }
-        out.put(ch);
     }
-}
-/*
-Description: Reads the encrypted file and writes it decrypted to the plaintext file
-Input: encrypted file, file to decrypt to, valid key
-Returns: decrypted version of encrypted file
-*/
-void fileDecrypt(fstream& in, fstream& out, int key)
-{
-    char ch;
-    while (in.peek() != EOF)
+    else if (mode == 2)
     {
-        ch = in.get();
-        if (isalnum(ch))
+        while (fin.peek() != EOF) ///loops through file while there is no end of line character
         {
-            ch = toupper(ch);
-            ch = decrypt(ch, key);
+            ch = fin.get();
+            if (isalnum(ch))
+            {
+                ch = toupper(ch);
+                ch = decrypt(ch, alpha, beta); 
+            }
+            fout.put(ch);
         }
-        out.put(ch);
     }
+    key.close();
+    fin.close();
+    fout.close();
 }
+
 /*
 Description: Encrypts an upper case alphabetic character using the Caesar cipher
 Input: upper case alphabetic character, valid key
 Returns: encrypted version of ch
 */
-char encrypt(char ch, int key)
+char encrypt(char ch, int alpha, int beta)
 {
     int letterValue = ch - 65;
-    char eChar = (letterValue + key) % 26;
+    char eChar = (alpha*letterValue + beta) % 26;
     eChar += 65;
     return eChar;
 }
@@ -128,10 +125,17 @@ Description: Decrypts an upper case alphabetic character using the Caesar cipher
 Input: upper case alphabetic character, valid key
 Returns: decrypted version of input
 */
-char decrypt (char ch, int key)
+char decrypt (char ch, int alpha, int beta)
 {
+    char dChar;
     int positionValue = ch - 65;
-    char dChar = (positionValue - key + 26) % 26;
+    int mi = MI[alpha-1];
+    int i = 0;
+    while (((mi*positionValue) - (mi*beta) + (26*i)) < 0)
+    {
+        i++;
+    }
+    dChar = ((mi*positionValue) - (mi*beta) + (26*i)) % 26;
     dChar += 65;
     return dChar;
 }
