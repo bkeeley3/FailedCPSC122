@@ -44,9 +44,11 @@ int main(int argc, char* argv[])
 }
 
 /*
-Description: Randomly generates an integer in the range: [1-25]
-Input: none
-Output: returns a randomly generated integer in the range [1-25]
+Description: Randomly generates 2 integers. 1 in the range: [1-25] 
+the other in range [0-12] that is used to choose an alpha value from array ALPHA_VALUES 
+prints both to file 
+Input: name of key file
+Output: returns 2 integers to the file given
 */
 void keyGen(string fileName)
 {
@@ -62,9 +64,10 @@ void keyGen(string fileName)
 }
 
 /*
-Description: Reads the plaintext and writes it encrypted to the encryption file
-Input: plaintext file, file to encrypt to, valid key
-Returns: encrypted version of plaintext file
+Description: retrieves key form file Reads the plaintext and writes it encrypted 
+to the encryption fileor reads the encrypted file back to plain text based on the mode
+Input: keyFile, file in , file out, mode 
+Returns: encrypted or decrypted file depending on mode
 */
 void fileControl(string keyFile, string inFile, string outFile, int mode)
 {
@@ -109,8 +112,8 @@ void fileControl(string keyFile, string inFile, string outFile, int mode)
 }
 
 /*
-Description: Encrypts an upper case alphabetic character using the Caesar cipher
-Input: upper case alphabetic character, valid key
+Description: Encrypts an upper case alphabetic character 
+Input: upper case alphabetic character, valid alpha and beta
 Returns: encrypted version of ch
 */
 char encrypt(char ch, int alpha, int beta)
@@ -121,8 +124,8 @@ char encrypt(char ch, int alpha, int beta)
     return eChar;
 }
 /*
-Description: Decrypts an upper case alphabetic character using the Caesar cipher
-Input: upper case alphabetic character, valid key
+Description: Decrypts an upper case alphabetic character 
+Input: upper case alphabetic character, valid alpha and beta
 Returns: decrypted version of input
 */
 char decrypt (char ch, int alpha, int beta)
